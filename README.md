@@ -23,6 +23,7 @@ This repository contains the interactive product prototype for the first demo:
 - 2-of-3 release quorum;
 - release-state transition and immutable-style activity trail.
 - a QoreX native-lane connection button for `qorechain-diana`; it requests the wallet account only after the user presses it.
+- a capsule composer for the title, recipient instruction, fixed guardian set and release quorum. The composer currently creates an in-memory draft; encryption and registry creation follow in the QoreSeal/testnet flow.
 
 The guardian approval button is explicitly a UI simulation. QoreSeal encryption, registered recipient cards, and QoreChain testnet transactions are the next implementation layer.
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
+import './composer.css';
 
 const guardians = [
   { initials: 'MR', name: 'Mira Rahman', address: 'qore1mira…m9q2', role: 'Designated guardian', state: 'approved' },
@@ -8,17 +9,34 @@ const guardians = [
   { initials: 'LS', name: 'Lena Sato', address: 'qore1lena…8pk1', role: 'Technical guardian', state: 'pending' }
 ];
 
+const defaultDraft = {
+  title: 'Project Afterimage',
+  message: 'Instructions, context, and access policies for the people who carry your work forward.',
+  threshold: 2
+};
+
 function App() {
   const [active, setActive] = useState('overview');
   const [released, setReleased] = useState(false);
   const [notice, setNotice] = useState('');
   const [wallet, setWallet] = useState(null);
   const [connecting, setConnecting] = useState(false);
+  const [composerOpen, setComposerOpen] = useState(false);
+  const [draft, setDraft] = useState(defaultDraft);
+  const [capsule, setCapsule] = useState(defaultDraft);
   const approvals = released ? 2 : 1;
 
   const release = () => {
     setReleased(true);
     setNotice('Second guardian approval recorded. Capsule is ready for recipient-side decryption.');
+  };
+
+  const updateDraft = (field, value) => setDraft(current => ({ ...current, [field]: value }));
+
+  const saveDraft = () => {
+    setCapsule(draft);
+    setComposerOpen(false);
+    setNotice(`“${draft.title}” is ready for QoreSeal encryption and on-chain registration.`);
   };
 
   const connectQorex = async () => {
@@ -58,7 +76,7 @@ function App() {
 
     <section className="content" id="top">
       <header><div className="crumb">CAPSULES <span>/</span> <strong>PROJECT AFTERIMAGE</strong></div><button className={wallet ? 'connect connected' : 'connect'} onClick={connectQorex} disabled={connecting}>{wallet ? `● ${wallet.address.slice(0, 11)}…${wallet.address.slice(-5)}` : connecting ? 'Connecting QoreX…' : 'Connect QoreX'}</button></header>
-      <div className="page-title"><div><p className="eyebrow">AFTERIMAGE PROTOCOL</p><h1>Your digital legacy,<br/><em>sealed for the right moment.</em></h1><p className="intro">A post-quantum capsule for the people and agents you trust.</p></div><button className="new-capsule" onClick={() => setNotice('A new capsule draft is ready to compose.')}>+ New capsule</button></div>
+      <div className="page-title"><div><p className="eyebrow">AFTERIMAGE PROTOCOL</p><h1>Your digital legacy,<br/><em>sealed for the right moment.</em></h1><p className="intro">A post-quantum capsule for the people and agents you trust.</p></div><button className="new-capsule" onClick={() => setComposerOpen(true)}>+ New capsule</button></div>
 
       {notice && <div className="notice"><span>✦</span>{notice}<button onClick={() => setNotice('')}>×</button></div>}
 
@@ -66,8 +84,8 @@ function App() {
         <article className="capsule-card">
           <div className="card-head"><span className="tag">ACTIVE CAPSULE</span><span className={released ? 'status released' : 'status'}>{released ? '● RELEASED' : '◌ SEALED'}</span></div>
           <div className="capsule-icon">✧</div>
-          <h2>Project Afterimage</h2><p className="muted">Instructions, context, and access policies for the people who carry your work forward.</p>
-          <div className="facts"><div><span>RELEASE CONDITION</span><strong>2 of 3 guardians</strong></div><div><span>CREATED</span><strong>Nov 18, 2026</strong></div></div>
+          <h2>{capsule.title}</h2><p className="muted">{capsule.message}</p>
+          <div className="facts"><div><span>RELEASE CONDITION</span><strong>{capsule.threshold} of 3 guardians</strong></div><div><span>CREATED</span><strong>Nov 18, 2026</strong></div></div>
           <div className="progress"><div><span>Guardian approvals</span><b>{approvals} / 3</b></div><div className="bar"><i style={{width: `${approvals / 3 * 100}%`}} /></div></div>
           <button className="open" onClick={() => setNotice(released ? 'Secure viewing must happen in the recipient’s browser.' : 'The capsule remains sealed until the second guardian approves.')}>{released ? 'View release package  →' : 'View capsule details  →'}</button>
         </article>
@@ -83,6 +101,18 @@ function App() {
       </section>
       <footer>AFTERIMAGE PROTOCOL <span>·</span> Built for the post-quantum future on QoreChain testnet</footer>
     </section>
+    {composerOpen && <div className="composer-backdrop" role="dialog" aria-modal="true" aria-labelledby="composer-title">
+      <section className="composer">
+        <div className="composer-heading"><div><p className="eyebrow">NEW CAPSULE</p><h2 id="composer-title">Set its release terms.</h2></div><button className="dismiss" onClick={() => setComposerOpen(false)} aria-label="Close composer">×</button></div>
+        <p className="composer-intro">Create the public release rule here. The capsule message is prepared for client-side encryption before anything reaches QoreChain.</p>
+        <label className="field"><span>CAPSULE NAME</span><input value={draft.title} maxLength="60" onChange={event => updateDraft('title', event.target.value)} /></label>
+        <label className="field"><span>MESSAGE FOR RECIPIENTS</span><textarea value={draft.message} maxLength="500" onChange={event => updateDraft('message', event.target.value)} /></label>
+        <div className="composer-guardians"><span>RECIPIENT GUARDIANS</span>{guardians.map(guardian => <div key={guardian.name}><span className="avatar guardian-avatar">{guardian.initials}</span><p><strong>{guardian.name}</strong><small>{guardian.address}</small></p><b>Included</b></div>)}</div>
+        <div className="threshold"><div><span>RELEASE QUORUM</span><strong>{draft.threshold} of 3 guardians</strong></div><div className="threshold-options">{[1, 2, 3].map(value => <button key={value} className={draft.threshold === value ? 'selected' : ''} onClick={() => updateDraft('threshold', value)}>{value}</button>)}</div></div>
+        <div className="composer-note"><span>✦</span> QoreSeal encryption happens in the recipient flow. This draft stores no secret material.</div>
+        <button className="save-draft" onClick={saveDraft}>Save capsule draft <span>→</span></button>
+      </section>
+    </div>}
   </main>
 }
 
