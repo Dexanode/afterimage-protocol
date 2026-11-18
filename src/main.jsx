@@ -15,7 +15,6 @@ function App() {
   const [wallet, setWallet] = useState(null);
   const [connecting, setConnecting] = useState(false);
   const approvals = released ? 2 : 1;
-  const status = useMemo(() => released ? 'Release authorized' : 'Awaiting guardian approval', [released]);
 
   const release = () => {
     setReleased(true);

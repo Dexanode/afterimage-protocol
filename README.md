@@ -26,6 +26,10 @@ This repository contains the interactive product prototype for the first demo:
 
 The guardian approval button is explicitly a UI simulation. QoreSeal encryption, registered recipient cards, and QoreChain testnet transactions are the next implementation layer.
 
+## On-chain release registry
+
+[`contracts/AfterimageRegistry.sol`](contracts/AfterimageRegistry.sol) is the EVM release registry for the next phase. It records the commitment of an encrypted capsule, the guardian set, the approval quorum and the release event. It deliberately does not accept plaintext, private keys or recipient encryption cards. The intended system boundary is described in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+
 ## Stack
 
 - React and Vite
