@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
 import './composer.css';
+import './pages.css';
 
 const guardians = [
   { initials: 'MR', name: 'Mira Rahman', address: 'qore1mira…m9q2', role: 'Designated guardian', state: 'approved' },
@@ -13,6 +14,13 @@ const defaultDraft = {
   title: 'Project Afterimage',
   message: 'Instructions, context, and access policies for the people who carry your work forward.',
   threshold: 2
+};
+
+const pageCopy = {
+  overview: { eyebrow: 'AFTERIMAGE PROTOCOL', title: <>Your digital legacy,<br/><em>sealed for the right moment.</em></>, intro: 'A post-quantum capsule for the people and agents you trust.' },
+  capsules: { eyebrow: 'CAPSULE LIBRARY', title: <>Hold context gently,<br/><em>release it deliberately.</em></>, intro: 'Each capsule holds encrypted instructions and a clear release rule.' },
+  guardians: { eyebrow: 'TRUSTED CIRCLE', title: <>The people who<br/><em>can open the way.</em></>, intro: 'Guardians approve release independently. They never need to share a secret.' },
+  activity: { eyebrow: 'CHAIN OF CUSTODY', title: <>Every threshold has<br/><em>a quiet record.</em></>, intro: 'A readable timeline of capsule decisions and release events.' }
 };
 
 function App() {
@@ -38,6 +46,8 @@ function App() {
     setComposerOpen(false);
     setNotice(`“${draft.title}” is ready for QoreSeal encryption and on-chain registration.`);
   };
+
+  const page = pageCopy[active];
 
   const connectQorex = async () => {
     const provider = window.qorex?.native;
@@ -76,11 +86,11 @@ function App() {
 
     <section className="content" id="top">
       <header><div className="crumb">CAPSULES <span>/</span> <strong>PROJECT AFTERIMAGE</strong></div><button className={wallet ? 'connect connected' : 'connect'} onClick={connectQorex} disabled={connecting}>{wallet ? `● ${wallet.address.slice(0, 11)}…${wallet.address.slice(-5)}` : connecting ? 'Connecting QoreX…' : 'Connect QoreX'}</button></header>
-      <div className="page-title"><div><p className="eyebrow">AFTERIMAGE PROTOCOL</p><h1>Your digital legacy,<br/><em>sealed for the right moment.</em></h1><p className="intro">A post-quantum capsule for the people and agents you trust.</p></div><button className="new-capsule" onClick={() => setComposerOpen(true)}>+ New capsule</button></div>
+      <div className="page-title"><div><p className="eyebrow">{page.eyebrow}</p><h1>{page.title}</h1><p className="intro">{page.intro}</p></div>{active !== 'activity' && <button className="new-capsule" onClick={() => setComposerOpen(true)}>+ New capsule</button>}</div>
 
       {notice && <div className="notice"><span>✦</span>{notice}<button onClick={() => setNotice('')}>×</button></div>}
 
-      <div className="grid">
+      {active === 'overview' && <><div className="grid">
         <article className="capsule-card">
           <div className="card-head"><span className="tag">ACTIVE CAPSULE</span><span className={released ? 'status released' : 'status'}>{released ? '● RELEASED' : '◌ SEALED'}</span></div>
           <div className="capsule-icon">✧</div>
@@ -99,6 +109,10 @@ function App() {
       <section className="timeline"><div className="section-heading"><div><p className="eyebrow">CHAIN OF CUSTODY</p><h2>Capsule activity</h2></div><button onClick={() => setActive('activity')}>View all activity →</button></div>
         <div className="events"><div className="event"><span className="event-icon">✦</span><div><strong>Capsule sealed on QoreChain</strong><p>ML-KEM-1024 envelopes created for 3 recipients.</p></div><time>Today, 10:42</time></div><div className="event"><span className="event-icon dim">✓</span><div><strong>Mira accepted guardianship</strong><p>Authenticated with a hybrid QoreChain signature.</p></div><time>Today, 10:47</time></div><div className="event"><span className="event-icon dim">◌</span><div><strong>Release condition configured</strong><p>Requires 2 of 3 approvals. No server holds the plaintext.</p></div><time>Today, 10:48</time></div></div>
       </section>
+      </>}
+      {active === 'capsules' && <section className="library"><article className="library-card active-library"><div className="library-icon">✧</div><div className="library-main"><p className="tag">ACTIVE · SEALED</p><h2>{capsule.title}</h2><p>{capsule.message}</p><div className="library-meta"><span>{capsule.threshold} of 3 guardian approvals</span><span>Created Nov 18, 2026</span></div></div><button className="quiet-button" onClick={() => setActive('overview')}>Open overview →</button></article><article className="empty-card"><span>＋</span><div><h3>Make room for another story.</h3><p>A separate release rule for every context that deserves one.</p></div><button onClick={() => setComposerOpen(true)}>Create capsule</button></article></section>}
+      {active === 'guardians' && <section className="guardian-page"><div className="guardian-page-intro"><span>3</span><div><h2>A small, intentional circle.</h2><p>Each person receives their own encrypted envelope and approves from their own wallet.</p></div></div><div className="guardian-grid">{guardians.map((guardian, index) => <article key={guardian.name} className="guardian-profile"><span className="avatar guardian-avatar">{guardian.initials}</span><div className="guardian-profile-title"><div><p className="tag">GUARDIAN 0{index + 1}</p><h3>{guardian.name}</h3></div><span className={index === 0 || (released && index === 1) ? 'approved-pill' : 'pending-pill'}>{index === 0 || (released && index === 1) ? 'Approved' : 'Pending'}</span></div><dl><div><dt>QORECHAIN ADDRESS</dt><dd>{guardian.address}</dd></div><div><dt>ROLE</dt><dd>{guardian.role}</dd></div></dl></article>)}</div></section>}
+      {active === 'activity' && <section className="activity-page"><div className="activity-filter"><span>ALL ACTIVITY</span><button className="filter-active">Everything</button><button>Capsule</button><button>Guardian</button></div><div className="activity-list"><div className="activity-day">TODAY · NOV 18, 2026</div><div className="activity-row"><span className="event-icon">✧</span><div><strong>Capsule sealed on QoreChain</strong><p>The encrypted envelope commitment is ready for registration.</p></div><time>10:42</time></div><div className="activity-row"><span className="event-icon dim">✓</span><div><strong>Mira accepted guardianship</strong><p>Authenticated with a hybrid QoreChain signature.</p></div><time>10:47</time></div><div className="activity-row"><span className="event-icon dim">◌</span><div><strong>Release condition configured</strong><p>{capsule.threshold} of 3 guardian approvals required to release this capsule.</p></div><time>10:48</time></div>{released && <div className="activity-row release"><span className="event-icon">✓</span><div><strong>Capsule released</strong><p>The guardian threshold has been met. Recipients may decrypt locally.</p></div><time>Now</time></div>}</div></section>}
       <footer>AFTERIMAGE PROTOCOL <span>·</span> Built for the post-quantum future on QoreChain testnet</footer>
     </section>
     {composerOpen && <div className="composer-backdrop" role="dialog" aria-modal="true" aria-labelledby="composer-title">
