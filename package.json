@@ -1,0 +1,18 @@
+{
+  "name": "afterimage-protocol",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@qorechain/qoreseal": "^0.1.0",
+    "@qorechain/sdk": "^0.14.0",
+    "@vitejs/plugin-react": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "vite": "latest"
+  }
+}
