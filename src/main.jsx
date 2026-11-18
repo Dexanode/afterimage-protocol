@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import './styles.css';
 import './composer.css';
 import './pages.css';
+import './sidebar.css';
 
 const guardians = [
   { initials: 'MR', name: 'Mira Rahman', address: 'qore1mira…m9q2', role: 'Designated guardian', state: 'approved' },
@@ -15,6 +16,17 @@ const defaultDraft = {
   message: 'Instructions, context, and access policies for the people who carry your work forward.',
   threshold: 2
 };
+
+function SidebarIcon({ name, active = false }) {
+  const shared = { width: 18, height: 18, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true };
+  const paths = {
+    overview: <><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></>,
+    capsules: <><path d="M12 3 20 7.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="m4.5 7.8 7.5 4.4 7.5-4.4"/><path d="M12 12.2V21"/></>,
+    guardians: <><path d="M16 20v-1.2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20"/><circle cx="9.5" cy="7" r="3.4"/><path d="M17 11a3.4 3.4 0 0 0 0-6.6M21 20v-1.2a4 4 0 0 0-2.6-3.75"/></>,
+    activity: <><path d="M4 6h16M4 12h16M4 18h11"/><circle cx="18" cy="18" r="3"/></>
+  };
+  return <svg {...shared} className={active ? 'text-emerald-900' : 'text-slate-400'}>{paths[name]}</svg>;
+}
 
 const pageCopy = {
   overview: { eyebrow: 'AFTERIMAGE PROTOCOL', title: <>Your digital legacy,<br/><em>sealed for the right moment.</em></>, intro: 'A post-quantum capsule for the people and agents you trust.' },
@@ -72,17 +84,14 @@ function App() {
 
 
   return <main className={`theme-${theme}`}>
-    <aside>
-      <a className="brand" href="#top"><span className="brand-mark">A</span><span>afterimage<span className="dot">.</span></span></a>
-      <div className="workspace"><span>WORKSPACE</span><strong>Legacy capsule</strong></div>
-      <nav>
-        <button className={active === 'overview' ? 'active' : ''} onClick={() => setActive('overview')}><i>◉</i> Overview</button>
-        <button className={active === 'capsules' ? 'active' : ''} onClick={() => setActive('capsules')}><i>◇</i> Capsules <b>1</b></button>
-        <button className={active === 'guardians' ? 'active' : ''} onClick={() => setActive('guardians')}><i>◌</i> Guardians</button>
-        <button className={active === 'activity' ? 'active' : ''} onClick={() => setActive('activity')}><i>↗</i> Activity</button>
-      </nav>
-      <section className="security"><span className="lock">✦</span><div><strong>Post-quantum sealed</strong><p>ML-KEM-1024 envelope<br/>bound to QoreChain keys</p></div></section>
-      <div className="profile"><span className="avatar">AD</span><div><strong>Alex Doe</strong><small>qore1a7d…c91e</small></div><span>⌄</span></div>
+    <aside className="!flex !w-[280px] !flex-col !border-r !border-slate-200 !bg-[#f7f8f4] !px-4 !py-6 shadow-[10px_0_35px_rgba(40,62,55,0.025)]">
+      <a className="!flex !items-center !gap-2.5 !px-2.5 !text-[21px] !font-bold !tracking-[-0.06em] !text-slate-900 no-underline" href="#top"><span className="!grid !h-8 !w-8 !place-items-center !rounded-xl !bg-emerald-900 font-serif text-lg text-emerald-50 shadow-sm">A</span><span>afterimage<span className="text-[#dc8067]">.</span></span></a>
+      <div className="mt-9 border-t border-slate-200 px-2.5 pt-5"><p className="m-0 font-mono text-[10px] font-medium tracking-[0.16em] text-slate-400">WORKSPACE</p><div className="mt-2 flex items-center justify-between"><strong className="text-[13px] font-semibold text-slate-700">Legacy capsule</strong><span className="h-2 w-2 rounded-full bg-emerald-700"></span></div></div>
+      <nav className="side-nav mt-5 grid gap-1">{[
+        ['overview', 'Overview'], ['capsules', 'Capsules'], ['guardians', 'Guardians'], ['activity', 'Activity']
+      ].map(([id, label]) => <button key={id} className={`!flex !items-center !gap-3 !rounded-xl !px-3 !py-2.5 !text-left !text-[13px] !font-medium !transition ${active === id ? '!bg-white !text-emerald-950 shadow-[0_4px_12px_rgba(30,58,49,0.07)] ring-1 ring-slate-200/80' : '!text-slate-500 hover:!bg-slate-100/80 hover:!text-slate-800'}`} onClick={() => setActive(id)}><SidebarIcon name={id} active={active === id}/><span className="flex-1">{label}</span>{id === 'capsules' && <span className="rounded-full bg-emerald-50 px-2 py-0.5 font-mono text-[10px] text-emerald-800">1</span>}</button>)}</nav>
+      <section className="mt-auto rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-[#f4faf5] p-3.5 shadow-[0_7px_18px_rgba(32,80,62,0.05)]"><div className="flex items-start gap-2.5"><span className="grid h-7 w-7 place-items-center rounded-lg bg-white text-[15px] text-emerald-700 shadow-sm">✦</span><div><strong className="text-[11px] font-semibold text-slate-700">Post-quantum sealed</strong><p className="mt-1 text-[10px] leading-[1.45] text-slate-500">ML-KEM-1024 envelope<br/>bound to QoreChain keys</p></div></div></section>
+      <div className="mt-5 flex items-center gap-2.5 border-t border-slate-200 px-2 pt-4"><span className="grid h-8 w-8 place-items-center rounded-full bg-[#d8cfb8] font-mono text-[10px] text-slate-700">AD</span><div className="grid flex-1 gap-0.5"><strong className="text-[12px] text-slate-700">Alex Doe</strong><small className="font-mono text-[10px] text-slate-400">qore1a7d…c91e</small></div><span className="text-slate-400">⌄</span></div>
     </aside>
 
     <section className="content" id="top">
