@@ -32,6 +32,7 @@ function App() {
   const [composerOpen, setComposerOpen] = useState(false);
   const [draft, setDraft] = useState(defaultDraft);
   const [capsule, setCapsule] = useState(defaultDraft);
+  const [theme, setTheme] = useState('light');
   const approvals = released ? 2 : 1;
 
   const release = () => {
@@ -70,7 +71,7 @@ function App() {
   };
 
 
-  return <main>
+  return <main className={`theme-${theme}`}>
     <aside>
       <a className="brand" href="#top"><span className="brand-mark">A</span><span>afterimage<span className="dot">.</span></span></a>
       <div className="workspace"><span>WORKSPACE</span><strong>Legacy capsule</strong></div>
@@ -85,7 +86,7 @@ function App() {
     </aside>
 
     <section className="content" id="top">
-      <header><div className="crumb">CAPSULES <span>/</span> <strong>PROJECT AFTERIMAGE</strong></div><button className={wallet ? 'connect connected' : 'connect'} onClick={connectQorex} disabled={connecting}>{wallet ? `● ${wallet.address.slice(0, 11)}…${wallet.address.slice(-5)}` : connecting ? 'Connecting QoreX…' : 'Connect QoreX'}</button></header>
+      <header><div className="crumb">CAPSULES <span>/</span> <strong>PROJECT AFTERIMAGE</strong></div><div className="header-actions"><button className="theme-toggle" onClick={() => setTheme(current => current === 'light' ? 'dark' : 'light')} aria-label="Toggle color theme"><span>{theme === 'light' ? '◐' : '☼'}</span><small>{theme === 'light' ? 'Night' : 'Light'}</small></button><button className={wallet ? 'connect connected' : 'connect'} onClick={connectQorex} disabled={connecting}>{wallet ? `● ${wallet.address.slice(0, 11)}…${wallet.address.slice(-5)}` : connecting ? 'Connecting QoreX…' : 'Connect QoreX'}</button></div></header>
       <div className="page-title"><div><p className="eyebrow">{page.eyebrow}</p><h1>{page.title}</h1><p className="intro">{page.intro}</p></div>{active !== 'activity' && <button className="new-capsule" onClick={() => setComposerOpen(true)}>+ New capsule</button>}</div>
 
       {notice && <div className="notice"><span>✦</span>{notice}<button onClick={() => setNotice('')}>×</button></div>}
